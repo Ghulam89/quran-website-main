@@ -4,9 +4,9 @@ import EnrollNow from "@/components/EnrollNow/EnrollNow";
 import { Footer } from "@/components/footer/Footer";
 import Navbar from "@/components/Header/Navbar";
 import { useSearchParams } from "next/navigation";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState,Suspense} from "react";
 import { FiArrowRight } from "react-icons/fi";
-const CourseDetails = () => {
+const CourseDetailsContent = () => {
   const searchParams = useSearchParams();
   const id = searchParams.get("id");
   const [singleCourse, setSingleCourse] = useState({});
@@ -96,4 +96,14 @@ const CourseDetails = () => {
   );
 };
 
+
+const CourseDetails = () => {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <CourseDetailsContent />
+    </Suspense>
+  );
+};
+
 export default CourseDetails;
+
