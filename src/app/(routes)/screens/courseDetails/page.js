@@ -47,7 +47,7 @@ const CourseDetails = () => {
 
             <ul className="list-disc ml-6 mt-4 text-gray-700">
               {singleCourse?.bulletPoints?.map((item, index) => {
-                return <li>{item}</li>;
+                return <li key={index}>{item}</li>;
               })}
             </ul>
 
@@ -64,7 +64,7 @@ const CourseDetails = () => {
           <div className="w-full md:w-1/3 flex flex-col gap-4">
             {singleCourse?.additionalImages?.map((item, index) => {
               return (
-                <img src={item?.url} alt="Books"  className="rounded-lg shadow-md w-full" />
+                <img key={index} src={item?.url} alt="Books"  className="rounded-lg shadow-md w-full" />
               );
             })}
           </div>
