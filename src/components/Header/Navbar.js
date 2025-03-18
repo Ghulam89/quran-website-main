@@ -19,7 +19,7 @@ const Navbar = () => {
     { label: "Courses", href: "#courses" },
     { label: "Contact Us", href: "#contact" },
     { label: "Get Hired", href: "#gethired" },
-    { label: "Gallery", href: "#gallery" },
+    { label: "Gallery", href: "/screens/gallery" },
   ];
 
   const categories = [
@@ -51,6 +51,16 @@ const Navbar = () => {
     setMobileMenuOpen((prev) => !prev);
   };
 
+  const handleNavItemClick = (href) => (e) => {
+    if (href.startsWith("/")) {
+      // If the href is a URL path, let the Link component handle it
+      return;
+    }
+    e.preventDefault();
+    const section = document.querySelector(href);
+    section?.scrollIntoView({ behavior: "smooth" });
+  };
+
   return (
     <nav className="relative bg-white">
       <div className="flex items-center justify-between px-4 py-3 md:px-8">
@@ -61,11 +71,7 @@ const Navbar = () => {
           {navItems.map((item, index) => (
             <Link
               scroll={false}
-              onClick={(e) => {
-                e.preventDefault();
-                const section = document.querySelector(item.href);
-                section?.scrollIntoView({ behavior: "smooth" });
-              }}
+              onClick={handleNavItemClick(item.href)}
               key={index}
               href={item.href}
               className="font-medium text-primary text-[16px]  hover:text-secondary hover:underline"
@@ -75,14 +81,6 @@ const Navbar = () => {
           ))}
         </div>
         <div className="hidden md:flex items-center gap-5">
-          {/* <Link
-            href="https://quran-admin.vercel.app/"
-            target="_blank"
-            className="font-semibold text-primary hover:text-slate-900 hover:underline"
-          >
-            Login
-          </Link> */}
-
           <Link href="https://quran-admin.vercel.app/">
             <Button
               label="Login"
@@ -110,11 +108,7 @@ const Navbar = () => {
             {navItems.map((item, index) => (
               <li key={index}>
                 <Link
-                  onClick={(e) => {
-                    e.preventDefault();
-                    const section = document.querySelector(item.href);
-                    section?.scrollIntoView({ behavior: "smooth" });
-                  }}
+                  onClick={handleNavItemClick(item.href)}
                   href={item.href}
                   className="text-primary font-medium hover:text-slate-900"
                 >
@@ -125,7 +119,6 @@ const Navbar = () => {
             <li>
               <a
                 href="https://quran-admin.vercel.app/"
-                // target="_blank"
                 rel="noopener noreferrer"
                 className="text-primary font-semibold hover:text-slate-900"
               >
