@@ -21,52 +21,80 @@ const Testimonials = () => {
     };
   }, []);
 
-  const testimonials = [
-    {
-      id: 1,
-      name: "Viech Robert",
-      location: "Warsaw, Poland",
-      rating: 4.5,
-      review:
-        "Wow... I am very happy to use this VPN, it turned out to be more than my expectations and so far there have been no problems. LaslesVPN always the best.",
-      image: "/avatars/test1.png",
-    },
-    {
-      id: 2,
-      name: "Yessica Christy",
-      location: "Shanxi, China",
-      rating: 4.5,
-      review:
-        "I like it because I like to travel far and still can connect with high speed.",
-      image: "/avatars/test2.png",
-    },
-    {
-      id: 3,
-      name: "Kim Young Jou",
-      location: "Seoul, South Korea",
-      rating: 4.5,
-      review:
-        "This is very unusual for my business that currently requires a virtual private network that has high security.",
-      image: "/avatars/test3.png",
-    },
-    {
-      id: 4,
-      name: "David Johnson",
-      location: "New York, USA",
-      rating: 4.8,
-      review: "This VPN has been a game-changer for my online activities!",
-      image: "/avatars/test1.png",
-    },
-    {
-      id: 5,
-      name: "Maria Garcia",
-      location: "Madrid, Spain",
-      rating: 4.7,
-      review:
-        "Easy to use and incredibly reliable. Highly recommended for everyone!",
-      image: "/avatars/test2.png",
-    },
-  ];
+  // const testimonials = [
+  //   {
+  //     id: 1,
+  //     name: "Viech Robert",
+  //     location: "Warsaw, Poland",
+  //     rating: 4.5,
+  //     review:
+  //       "Wow... I am very happy to use this VPN, it turned out to be more than my expectations and so far there have been no problems. LaslesVPN always the best.",
+  //     image: "/avatars/test1.png",
+  //   },
+  //   {
+  //     id: 2,
+  //     name: "Yessica Christy",
+  //     location: "Shanxi, China",
+  //     rating: 4.5,
+  //     review:
+  //       "I like it because I like to travel far and still can connect with high speed.",
+  //     image: "/avatars/test2.png",
+  //   },
+  //   {
+  //     id: 3,
+  //     name: "Kim Young Jou",
+  //     location: "Seoul, South Korea",
+  //     rating: 4.5,
+  //     review:
+  //       "This is very unusual for my business that currently requires a virtual private network that has high security.",
+  //     image: "/avatars/test3.png",
+  //   },
+  //   {
+  //     id: 4,
+  //     name: "David Johnson",
+  //     location: "New York, USA",
+  //     rating: 4.8,
+  //     review: "This VPN has been a game-changer for my online activities!",
+  //     image: "/avatars/test1.png",
+  //   },
+  //   {
+  //     id: 5,
+  //     name: "Maria Garcia",
+  //     location: "Madrid, Spain",
+  //     rating: 4.7,
+  //     review:
+  //       "Easy to use and incredibly reliable. Highly recommended for everyone!",
+  //     image: "/avatars/test2.png",
+  //   },
+  // ];
+
+
+  
+      const [testimonials,setTestimonials]= useState([]);
+      const fetchTestimonials = () => {
+        const requestOptions = {
+          method: 'GET',
+          redirect: 'follow'
+        };
+    
+        fetch('https://quran-backend-theta.vercel.app/v1/user/review', requestOptions)
+          .then((response) => response.text())
+          .then((result) => {
+            let data = JSON.parse(result);
+    
+            console.log(data);
+            
+            setTestimonials(data?.data);
+          })
+          .catch((error) => console.error(error));
+      };
+    
+    
+      useEffect(()=>{
+       
+        fetchTestimonials();
+    
+      },[])
 
   return (
     <div className="py-12">
@@ -95,28 +123,28 @@ const Testimonials = () => {
               1024: { slidesPerView: 3 },
             }}
           >
-            {testimonials.map((testimonial) => (
-              <SwiperSlide key={testimonial.id}>
+            {testimonials?.map((testimonial) => (
+              <SwiperSlide key={testimonial._id}>
                 <div className="p-6 bg-white  h-52 rounded-lg border-2 border-gray-200">
                   <div className="flex justify-between items-center mb-4">
                  
                     <div className="flex items-center">
                       <img
-                        src={testimonial.image}
-                        alt={testimonial.name}
+                        src={testimonial.studentId?.photo}
+                        alt={testimonial?.studentId?.photo}
                         className="w-12 h-12 rounded-full border-gray-300"
                       />
                       <div className="ml-4">
                         <h3 className="text-lg font-medium text-gray-800">
-                          {testimonial.name}
+                          {testimonial?.studentId?.name}
                         </h3>
-                        <p className="text-sm text-gray-500">
-                          {testimonial.location}
+                        <p className="text-sm text-left text-gray-500">
+                          {testimonial?.enrollmentId?.courseName}
                         </p>
                       </div>
                     </div>
                   
-                    <div className="flex items-center gap-2 text-yellow-500">
+                    <div className="flex items-center gap-2 text-[#FEA250]">
                       <span className="text-lg text-gray-400">
                         {testimonial.rating}
                       </span>
@@ -125,7 +153,7 @@ const Testimonials = () => {
                   </div>
 
                
-                  <p className="text-start text-gray-600">{testimonial.review}</p>
+                  <p className="text-start text-gray-600">{testimonial.reviewText}</p>
                 </div>
               </SwiperSlide>
             ))}

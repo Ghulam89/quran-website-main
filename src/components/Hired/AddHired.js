@@ -7,6 +7,9 @@ import Input from "../Input";
 import toast, { Toaster } from "react-hot-toast";
 
 const AddHired = ({ isModalOpen, setIsModalOpen, closeModal, setUsers }) => {
+  const [pdfPreview, setPdfPreview] = useState(null);
+  const [loading, setLoading] = useState(false);
+
   const [planData, setPlanData] = useState({
     name: "",
     fatherName: "",
@@ -14,12 +17,8 @@ const AddHired = ({ isModalOpen, setIsModalOpen, closeModal, setUsers }) => {
     whatsapp: "",
     phone: "",
     address: "",
-    cnicImage: null,
-    imagePreview: "", // State for image preview
+    file:null
   });
-
-  const [loading, setLoading] = useState(false);
-  const [image, setImage] = useState("");
 
   // Check if all fields are filled
   const isFormValid =
@@ -29,40 +28,39 @@ const AddHired = ({ isModalOpen, setIsModalOpen, closeModal, setUsers }) => {
     planData.whatsapp &&
     planData.phone &&
     planData.address &&
-    planData.cnicImage;
+    pdfPreview; // Ensure PDF is uploaded
 
-  const handleChange = (e) => {
-    const { name, value, files } = e.target;
-
-
-
-
-    if (name === "cnicImage") {
-      const file = files[0];
-      const previewUrl = URL.createObjectURL(file); // Create a URL for the image preview
-
-      setImage(file)
-
-      setPlanData((prev) => ({
-        ...prev,
-        cnicImage: file,
-        imagePreview: previewUrl, // Set the preview URL
-      }));
+  // Handle PDF file upload
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file && file.type === "application/pdf") {
+      setPlanData((prev) => ({ ...prev, file }));
+      setPdfPreview(URL.createObjectURL(file)); // Create a preview URL for the PDF
     } else {
-      setPlanData((prev) => ({
-        ...prev,
-        [name]: value,
-      }));
+      toast.error("Please upload a valid PDF file.");
     }
   };
 
-  const bannerSubmit = async (e) => {
+  // Remove PDF file
+  const handleRemovePdf = () => {
+    setPlanData((prev) => ({ ...prev, file: null }));
+    setPdfPreview(null);
+  };
+
+  // Handle input changes for text fields
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setPlanData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  // Handle form submission
+   const bannerSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
 
 
     const formdata = new FormData();
-    formdata.append("images", image);
+    formdata.append("images", planData.file);
 
     const requestOptions = {
       method: "POST",
@@ -142,20 +140,6 @@ const AddHired = ({ isModalOpen, setIsModalOpen, closeModal, setUsers }) => {
     // }, 2000);
   };
 
-  const handleRemoveImage = () => {
-    setPlanData((prev) => ({
-      ...prev,
-      cnicImage: null,
-      imagePreview: "", // Remove the image preview
-    }));
-    setImage(""); // Also reset the 'image' state for the file
-
-    // Reset the file input value
-    document.getElementById("fileInput").value = "";
-  };
-
-
-
   return (
     <div>
       <Modal isOpen={isModalOpen} onClose={closeModal} className="rounded-md">
@@ -219,7 +203,6 @@ const AddHired = ({ isModalOpen, setIsModalOpen, closeModal, setUsers }) => {
                     onChange={handleChange}
                   />
                 </div>
-
                 <div className="sm:w-[48%] w-full">
                   <Input
                     label={"Address"}
@@ -230,47 +213,41 @@ const AddHired = ({ isModalOpen, setIsModalOpen, closeModal, setUsers }) => {
                     onChange={handleChange}
                   />
                 </div>
-                <Toaster
-                  position="top-right"
-                  reverseOrder={false}
-                />
                 <div
                   className="w-full border-dashed border-[#9E9E9E] bg-[#F6F6F6] border-2 rounded-lg p-4 cursor-pointer"
-                  onClick={() => document.getElementById("fileInput").click()} // Trigger input click
+                  onClick={() => document.getElementById("pdfInput").click()}
                 >
                   <div className="bg-[#F6F6F6] mx-auto w-14 flex justify-center items-center h-15 rounded-2xl">
                     <MdOutlineFileUpload size={30} className="text-primary" />
                   </div>
                   <p className="text-primary font-medium mt-3 text-center">
-                    <span className="text-[#0085FF]">Click here</span> to upload or drop CNIC
+                    <span className="text-[#0085FF]">Click here</span> to upload or drop PDF
                   </p>
-
+                  {pdfPreview && (
+                    <div className="relative w-full h-32 mt-4">
+                      <iframe
+                        src={pdfPreview}
+                        title="PDF Preview"
+                        className="w-full h-full object-cover rounded-md"
+                      />
+                      <button
+                        type="button"
+                        onClick={handleRemovePdf}
+                        className="absolute top-0 right-0 bg-red-500 text-white p-2 rounded-full"
+                      >
+                        <MdClose size={20} />
+                      </button>
+                    </div>
+                  )}
                   <input
-                    id="fileInput" // Add an ID to reference the input
+                    id="pdfInput"
                     type="file"
-                    name="cnicImage"
-                    style={{ display: "none" }} // Keep input hidden
-                    onChange={handleChange} // Call the change handler
+                    style={{ display: "none" }}
+                    onChange={handleFileChange}
+                    accept="application/pdf"
                   />
                 </div>
-
-                {/* Image Preview Section */}
-                {planData.imagePreview && (
-                  <div className="mt-4 relative">
-                    <img
-                      src={planData.imagePreview}
-                      alt="Image Preview"
-                      className="w-full h-[100px] rounded-lg"
-                    />
-                    <MdClose
-                      onClick={handleRemoveImage}
-                      size={20}
-                      className="absolute top-0 right-0 cursor-pointer text-white bg-black p-1 rounded-full"
-                    />
-                  </div>
-                )}
               </div>
-
               <div className="flex justify-center pt-5">
                 <Button
                   label={loading ? "Submitting..." : "Submit"}
@@ -284,6 +261,7 @@ const AddHired = ({ isModalOpen, setIsModalOpen, closeModal, setUsers }) => {
           </div>
         </div>
       </Modal>
+      <Toaster position="top-right" reverseOrder={false} />
     </div>
   );
 };

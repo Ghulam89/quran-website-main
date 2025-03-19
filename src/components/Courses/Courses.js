@@ -3,6 +3,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { FaAngleRight, FaAngleDown, FaAngleUp } from "react-icons/fa";
 import EnrollNow from "../EnrollNow/EnrollNow";
+import moment from "moment";
 
 // Accordion Component
 const Accordion = ({ title, children, isOpen, onClick }) => {
@@ -121,6 +122,8 @@ export default function Courses() {
                           alt={course.name}
                           className="w-full h-60 object-cover"
                         />
+
+
                         {course?.salePrice?
                         <div  className=" absolute top-3 right-3">
                         <span className="   bg-secondary text-white px-5 py-1">{parseInt(course?.discountPercentage)}%</span>
@@ -145,14 +148,29 @@ export default function Courses() {
                           {course.description}
                         </p>
                         
-                        <div>
+                        <div className=" flex justify-between items-center">
   <p className="text-lg font-medium text-gray-800 pt-2">
-    <span className=" font-semibold text-xl">${course?.finalPrice}</span>
+    {course.salePrice?<span className=" font-semibold text-xl">${course?.finalPrice}</span>:<span className=" font-semibold text-xl">${course?.price}</span>
+    }
+    
     {course?.salePrice?
-        <span className="text-gray-500  font-normal line-through ml-2">${course?.price}</span>:null
+        <span className="text-gray-500  font-normal line-through ml-2">${course?.finalPrice}</span>:null
     }
 
   </p>
+  {/* {course?.salePrice?
+                        <div  className=" absolute top-3 right-3">
+                        <span className="   bg-secondary text-white px-5 py-1">{parseInt(course?.discountPercentage)}%</span>
+                      </div>:null
+                        } */}
+
+
+{course.salePrice ? (
+  <span className="text-gray-700 px-5 font-semibold capitalize py-1">
+    {`In ${Math.abs(moment().diff(moment(course.saleValidDate).startOf('day'), 'days'))}`} days
+  </span>
+) : null}
+  
 </div>
 
                         <div >
