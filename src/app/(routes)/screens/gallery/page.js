@@ -4,22 +4,7 @@ import Navbar from '@/components/Header/Navbar';
 import React, { useEffect, useState } from 'react';
 
 const Gallery = () => {
-  const images = [
-    '/avatars/course1.png',
-    '/avatars/course2.png',
-    '/avatars/course3.png',
-    '/avatars/course1.png',
-    '/avatars/course3.png',
-    '/avatars/course2.png',
-    '/avatars/course1.png',
-    '/avatars/course3.png',
-    '/avatars/course1.png',
-  ];
-
-
-
-  
-    const [gallery,setGallery]= useState({});
+    const [gallery,setGallery]= useState([]);
     const fetchGallery = () => {
       const requestOptions = {
         method: 'GET',
@@ -51,7 +36,7 @@ const Gallery = () => {
     <div className="container mx-auto px-4 py-8">
       <h1 className="text-3xl font-bold text-gray-900 pb-4">Gallery</h1>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-        {gallery.map((image, index) => (
+        {gallery?.map((image, index) => (
           <div key={index} className="overflow-hidden rounded-md shadow-lg">
             <img
               src={image?.imageUrl}
